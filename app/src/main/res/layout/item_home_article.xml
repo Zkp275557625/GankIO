@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="0dp"
+    android:layout_marginTop="@dimen/dp_4"
+    android:layout_marginRight="0dp"
+    android:layout_marginBottom="@dimen/dp_4"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/colorWhite"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="@dimen/dp_1">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_10">
+
+        <!--<TextView-->
+            <!--android:id="@+id/tvCategory"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/Grey200"-->
+            <!--android:paddingTop="@dimen/dp_5"-->
+            <!--android:paddingBottom="@dimen/dp_5"-->
+            <!--android:textColor="@color/Grey900"-->
+            <!--android:textSize="@dimen/sp_16" />-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/ivArticleThumbnail"
+                android:layout_width="@dimen/dp_75"
+                android:layout_height="@dimen/dp_130"
+                android:layout_marginEnd="@dimen/dp_5"
+                android:layout_marginRight="@dimen/dp_5"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:srcCompat="@drawable/bg_placeholder"
+                tools:ignore="RtlHardcoded"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvArticleTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ivArticleThumbnail"
+                android:layout_toRightOf="@id/ivArticleThumbnail"
+                android:ellipsize="end"
+                android:gravity="top|start"
+                android:lineSpacingExtra="@dimen/dp_2"
+                android:maxLines="2"
+                android:textColor="@color/Grey900"
+                android:textSize="@dimen/sp_16"
+                tools:ignore="RtlHardcoded"
+                tools:text="WanAndroid" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/ivArticleLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_like_not" />
+
+            <TextView
+                android:id="@+id/tvArticleAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/dp_12"
+                android:layout_toEndOf="@id/ivArticleLike"
+                android:gravity="center"
+                android:textColor="@color/Grey700"
+                android:textSize="@dimen/sp_12"
+                tools:text="author" />
+
+            <TextView
+                android:id="@+id/tvArticleNiceDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/dp_12"
+                android:layout_toEndOf="@id/tvArticleAuthor"
+                android:gravity="center_vertical"
+                android:textColor="@color/Grey700"
+                android:textSize="@dimen/sp_12"
+                tools:ignore="RtlHardcoded"
+                tools:text="2019-01-01" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

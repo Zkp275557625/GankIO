@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">GankIO</string>
+
+    <string name="scale_down_show_behavior">com.zkp.gankio.utils.ScaleDownShowBehavior</string>
+    <string name="bye_burger_bottom_behavior">com.zkp.gankio.utils.BottomNavigationBehavior</string>
+
+    <string name="home_pager">首页</string>
+    <string name="category_pager">分类</string>
+    <string name="images_pager">图片</string>
+    <string name="mine_pager">我的</string>
+
+</resources>

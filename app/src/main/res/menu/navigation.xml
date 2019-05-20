@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/home_pager" />
+
+    <item
+        android:id="@+id/navigation_category"
+        android:icon="@drawable/ic_category"
+        android:title="@string/category_pager" />
+
+    <item
+        android:id="@+id/navigation_images"
+        android:icon="@drawable/ic_images"
+        android:title="@string/images_pager" />
+
+    <item
+        android:id="@+id/navigation_mine"
+        android:icon="@drawable/ic_mine"
+        android:title="@string/mine_pager" />
+
+</menu>
