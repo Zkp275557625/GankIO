@@ -41,10 +41,14 @@ public class AppConfig {
     /**
      * 福利(图片)
      */
-    public static final int TYPE_IMAGES = 2;
+    public static final int TYPE_READ = 2;
     /**
      * 我的
      */
     public static final int TYPE_MINE = 3;
 
+    /**
+     * 数据库名称
+     */
+    public static final String DB_NAME = "zkp_gankio_db.db";
 }

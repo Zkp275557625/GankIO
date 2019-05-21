@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion rootProject.ext.android["compileSdkVersion"]
@@ -79,6 +80,12 @@ android {
         }
     }
 
+    greendao {
+        schemaVersion 1
+        daoPackage 'com.zkp.gankio.db.greendao'
+        targetGenDir 'src/main/java'
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -106,6 +113,7 @@ dependencies {
     implementation rootProject.ext.dependencies["banner"]
     implementation rootProject.ext.dependencies["agentweb"]
     implementation rootProject.ext.dependencies["smartShow"]
+    implementation rootProject.ext.dependencies["MagicIndicator"]
 
     //net
     implementation rootProject.ext.dependencies["gson"]
@@ -134,5 +142,7 @@ dependencies {
     //tools
     implementation rootProject.ext.dependencies["permission"]
     implementation rootProject.ext.dependencies["BaseRecyclerViewAdapterHelper"]
+    implementation rootProject.ext.dependencies["greenDao"]
+    implementation rootProject.ext.dependencies["greenDao-Generator"]
 
 }

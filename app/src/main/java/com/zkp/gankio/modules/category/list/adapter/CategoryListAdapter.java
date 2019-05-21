@@ -1,4 +1,4 @@
-package com.zkp.gankio.modules.home.adapter;
+package com.zkp.gankio.modules.category.list.adapter;
 
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -6,7 +6,7 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.zkp.gankio.R;
-import com.zkp.gankio.beans.BaseGankBean;
+import com.zkp.gankio.beans.CategoryBean;
 import com.zkp.gankio.utils.ImageLoader;
 
 import java.util.List;
@@ -14,22 +14,22 @@ import java.util.List;
 /**
  * @author: zkp
  * @project: GankIO
- * @package: com.zkp.gankio.modules.home.adapter
- * @time: 2019/5/20 15:23
+ * @package: com.zkp.gankio.modules.category.list.adapter
+ * @time: 2019/5/21 14:48
  * @description:
  */
-public class HomeArticlesAdapter extends BaseQuickAdapter<BaseGankBean, BaseViewHolder> {
+public class CategoryListAdapter extends BaseQuickAdapter<CategoryBean.ResultsBean, BaseViewHolder> {
 
 
-    public HomeArticlesAdapter(int layoutResId, @Nullable List<BaseGankBean> data) {
+    public CategoryListAdapter(int layoutResId, @Nullable List<CategoryBean.ResultsBean> data) {
         super(layoutResId, data);
     }
 
 
     @Override
-    protected void convert(BaseViewHolder helper, BaseGankBean item) {
+    protected void convert(BaseViewHolder helper, CategoryBean.ResultsBean item) {
 
-        helper.setText(R.id.tvArticleTitle, item.getDesc());
+        helper.setText(R.id.tvArticleTitle, item.getDesc().replace("#", ""));
         helper.setText(R.id.tvArticleNiceDate, item.getPublishedAt().substring(0, 10));
         helper.setText(R.id.tvArticleAuthor, item.getWho());
 

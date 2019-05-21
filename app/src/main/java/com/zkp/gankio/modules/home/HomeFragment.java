@@ -1,35 +1,33 @@
 package com.zkp.gankio.modules.home;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.coder.zzq.smartshow.toast.SmartToast;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
-import com.youth.banner.Banner;
-import com.youth.banner.BannerConfig;
-import com.youth.banner.Transformer;
 import com.zkp.gankio.R;
 import com.zkp.gankio.app.App;
 import com.zkp.gankio.base.fragment.BaseFragment;
-import com.zkp.gankio.beans.BannerBean;
 import com.zkp.gankio.beans.BaseGankBean;
 import com.zkp.gankio.beans.TodayGankBean;
+import com.zkp.gankio.db.entity.Category;
 import com.zkp.gankio.modules.home.adapter.HomeArticlesAdapter;
-import com.zkp.gankio.utils.GlideImageLoader;
+import com.zkp.gankio.modules.home.detail.ArticleActivity;
 import com.zkp.gankio.utils.itemdecoration.GroupItem;
 import com.zkp.gankio.utils.itemdecoration.GroupItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 
@@ -48,11 +46,9 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout mRefreshLayout;
 
-    private Banner mBanner;
-
-    private List<String> mImageUrlList;
     private HomeArticlesAdapter mAdapter;
-    private List<BaseGankBean> baseGankBeanList;
+    private List<BaseGankBean> mBaseGankBeanList;
+    private GroupItemDecoration mGroupItemDecoration;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -77,25 +73,6 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
         mAdapter = new HomeArticlesAdapter(R.layout.item_home_article, resultsBeanList);
         mRecyclerView.setAdapter(mAdapter);
 
-        @SuppressLint("InflateParams")
-        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.frgament_home_banner, null);
-        mBanner = layout.findViewById(R.id.banner);
-        layout.removeView(mBanner);
-        mAdapter.setHeaderView(mBanner);
-
-        //设置banner样式
-        mBanner.setBannerStyle(BannerConfig.NUM_INDICATOR);
-        //设置图片加载器
-        mBanner.setImageLoader(new GlideImageLoader());
-        //设置banner动画效果
-        mBanner.setBannerAnimation(Transformer.Accordion);
-        //设置自动轮播，默认为true
-        mBanner.isAutoPlay(true);
-        //设置轮播时间
-        mBanner.setDelayTime(4000);
-        //设置指示器位置（当banner模式中有指示器时）
-        mBanner.setIndicatorGravity(BannerConfig.RIGHT);
-
         mPresenter = new HomePresenter();
         mPresenter.attachView(this);
         mPresenter.registerEventBus();
@@ -117,168 +94,50 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
 
     @Override
     protected void initEventAndData() {
+        mRefreshLayout.setOnRefreshListener(refreshLayout -> {
+            mPresenter.getTodayGank();
+            refreshLayout.finishRefresh();
+        });
 
-    }
-
-    @Override
-    public void getBannerSuccess(BannerBean data) {
-        if (mImageUrlList == null) {
-            mImageUrlList = new ArrayList<>();
-        } else {
-            mImageUrlList.clear();
-        }
-
-
-        for (BannerBean.ResultsBean dataBean : data.getResults()) {
-            mImageUrlList.add(dataBean.getUrl());
-        }
-
-        //设置图片集合
-        mBanner.setImages(mImageUrlList);
-        mBanner.start();
-    }
-
-    @Override
-    public void getBannerError(String errMsg) {
-        SmartToast.info(errMsg);
+        mAdapter.setOnItemClickListener((adapter, view, position) -> {
+            Intent intent = new Intent(getActivity(), ArticleActivity.class);
+            intent.putExtra("articleId", Objects.requireNonNull(mAdapter.getItem(position)).get_id());
+            intent.putExtra("articleLink", Objects.requireNonNull(mAdapter.getItem(position)).getUrl());
+            intent.putExtra("title", Objects.requireNonNull(mAdapter.getItem(position)).getDesc());
+            intent.putExtra("author", Objects.requireNonNull(mAdapter.getItem(position)).getWho());
+            intent.putExtra("type", Objects.requireNonNull(mAdapter.getItem(position)).getType());
+            intent.putExtra("isCollected", false);
+            intent.putExtra("isShowCollectIcon", true);
+            startActivity(intent);
+        });
     }
 
     @Override
     public void getTodayGankSuceess(TodayGankBean data) {
-        Log.d("qwe", data.toString());
-        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-        @SuppressLint("InflateParams")
-        View groupView = layoutInflater.inflate(R.layout.item_group, null);
-        mRecyclerView.addItemDecoration(new GroupItemDecoration(getContext(), groupView, new GroupItemDecoration.DecorationCallback() {
-            @Override
-            public void setGroup(List<GroupItem> groupList) {
-
-                for (int i = 0; i < data.getCategory().size(); i++) {
-                    GroupItem groupItem;
-                    switch (data.getCategory().get(i)) {
-                        case "iOS":
-                            if (groupList.size() == 0) {
-                                groupItem = new GroupItem(1);
-                            } else {
-                                groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().getiOS().size());
-                            }
-                            groupItem.setData("category", data.getCategory().get(i));
-                            groupList.add(groupItem);
-                            break;
-                        case "拓展资源":
-                            if (groupList.size() == 0) {
-                                groupItem = new GroupItem(1);
-                            } else {
-                                groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get拓展资源().size());
-                            }
-                            groupItem.setData("category", data.getCategory().get(i));
-                            groupList.add(groupItem);
-                            break;
-                        case "瞎推荐":
-                            if (groupList.size() == 0) {
-                                groupItem = new GroupItem(1);
-                            } else {
-                                groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get瞎推荐().size());
-                            }
-                            groupItem.setData("category", data.getCategory().get(i));
-                            groupList.add(groupItem);
-                            break;
-                        case "Android":
-                            if (groupList.size() == 0) {
-                                groupItem = new GroupItem(1);
-                            } else {
-                                groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().getAndroid().size());
-                            }
-                            groupItem.setData("category", data.getCategory().get(i));
-                            groupList.add(groupItem);
-                            break;
-                        case "App":
-                            if (groupList.size() == 0) {
-                                groupItem = new GroupItem(1);
-                            } else {
-                                groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().getApp().size());
-                            }
-                            groupItem.setData("category", data.getCategory().get(i));
-                            groupList.add(groupItem);
-                            break;
-                        case "前端":
-                            if (groupList.size() == 0) {
-                                groupItem = new GroupItem(1);
-                            } else {
-                                groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get前端().size());
-                            }
-                            groupItem.setData("category", data.getCategory().get(i));
-                            break;
-                        case "福利":
-                            if (groupList.size() == 0) {
-                                groupItem = new GroupItem(1);
-                            } else {
-                                groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get福利().size());
-                            }
-                            groupItem.setData("category", data.getCategory().get(i));
-                            groupList.add(groupItem);
-                            break;
-                        case "休息视频":
-                            if (groupList.size() == 0) {
-                                groupItem = new GroupItem(1);
-                            } else {
-                                groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get休息视频().size());
-                            }
-                            groupItem.setData("category", data.getCategory().get(i));
-                            groupList.add(groupItem);
-                            break;
-                        default:
-                            break;
-                    }
+        if (mGroupItemDecoration == null) {
+            @SuppressLint("InflateParams")
+            View groupView = LayoutInflater.from(getContext()).inflate(R.layout.item_group, null);
+            mGroupItemDecoration = new GroupItemDecoration(getContext(), groupView, new GroupItemDecoration.DecorationCallback() {
+                @Override
+                public void setGroup(List<GroupItem> groupList) {
+                    addDataToGroup(groupList, data);
                 }
-            }
 
-            @Override
-            public void buildGroupView(View groupView, GroupItem groupItem) {
-                TextView textName = groupView.findViewById(R.id.tvCategory);
-                textName.setText(groupItem.getData("category").toString());
-            }
-        }));
+                @Override
+                public void buildGroupView(View groupView, GroupItem groupItem) {
+                    TextView textName = groupView.findViewById(R.id.tvCategory);
+                    textName.setText(groupItem.getData("category").toString());
+                }
+            });
 
-        if (baseGankBeanList == null) {
-            baseGankBeanList = new ArrayList<>();
-        } else {
-            baseGankBeanList.clear();
+            mRecyclerView.addItemDecoration(mGroupItemDecoration);
         }
 
-        for (int i = 0; i < data.getCategory().size(); i++) {
-            switch (data.getCategory().get(i)) {
-                case "iOS":
-                    baseGankBeanList.addAll(data.getResults().getiOS());
-                    break;
-                case "拓展资源":
-                    baseGankBeanList.addAll(data.getResults().get拓展资源());
-                    break;
-                case "瞎推荐":
-                    baseGankBeanList.addAll(data.getResults().get瞎推荐());
-                    break;
-                case "Android":
-                    baseGankBeanList.addAll(data.getResults().getAndroid());
-                    break;
-                case "App":
-                    baseGankBeanList.addAll(data.getResults().getApp());
-                    break;
-                case "前端":
-                    baseGankBeanList.addAll(data.getResults().get前端());
-                    break;
-                case "福利":
-                    baseGankBeanList.addAll(data.getResults().get福利());
-                    break;
-                case "休息视频":
-                    baseGankBeanList.addAll(data.getResults().get休息视频());
-                    break;
-                default:
-                    break;
-            }
-        }
+        addDataToAdapter(data);
 
-        mAdapter.addData(baseGankBeanList);
-        mPresenter.getBanner();
+        addCategories(data.getCategory());
+
+        mAdapter.addData(mBaseGankBeanList);
     }
 
     @Override
@@ -287,17 +146,112 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
     }
 
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden) {
-            if (mBanner != null) {
-                mBanner.stopAutoPlay();
-            }
-        } else {
-            if (mBanner != null) {
-                mBanner.startAutoPlay();
+    public void addCategoriesSuccess() {
+
+    }
+
+    private void addDataToGroup(List<GroupItem> groupList, TodayGankBean data) {
+        for (int i = 0; i < data.getCategory().size(); i++) {
+            GroupItem groupItem;
+            if (i == 0) {
+                groupItem = new GroupItem(0);
+                groupItem.setData("category", data.getCategory().get(0));
+                groupList.add(groupItem);
+            } else {
+                switch (data.getCategory().get(i)) {
+                    case "iOS":
+                        groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().getiOS().size());
+                        groupItem.setData("category", data.getCategory().get(i));
+                        groupList.add(groupItem);
+                        break;
+                    case "拓展资源":
+                        groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get拓展资源().size());
+                        groupItem.setData("category", data.getCategory().get(i));
+                        groupList.add(groupItem);
+                        break;
+                    case "瞎推荐":
+                        groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get瞎推荐().size());
+                        groupItem.setData("category", data.getCategory().get(i));
+                        groupList.add(groupItem);
+                        break;
+                    case "Android":
+                        groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().getAndroid().size());
+                        groupItem.setData("category", data.getCategory().get(i));
+                        groupList.add(groupItem);
+                        break;
+                    case "App":
+                        groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().getApp().size());
+                        groupItem.setData("category", data.getCategory().get(i));
+                        groupList.add(groupItem);
+                        break;
+                    case "前端":
+                        groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get前端().size());
+                        groupItem.setData("category", data.getCategory().get(i));
+                        break;
+                    case "福利":
+                        groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get福利().size());
+                        groupItem.setData("category", data.getCategory().get(i));
+                        groupList.add(groupItem);
+                        break;
+                    case "休息视频":
+                        groupItem = new GroupItem(groupList.get(groupList.size() - 1).getStartPosition() + data.getResults().get休息视频().size());
+                        groupItem.setData("category", data.getCategory().get(i));
+                        groupList.add(groupItem);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+    }
+
+    private void addDataToAdapter(TodayGankBean data) {
+
+        if (mBaseGankBeanList == null) {
+            mBaseGankBeanList = new ArrayList<>();
+        } else {
+            mBaseGankBeanList.clear();
+        }
+
+        for (int i = 0; i < data.getCategory().size(); i++) {
+            switch (data.getCategory().get(i)) {
+                case "iOS":
+                    mBaseGankBeanList.addAll(data.getResults().getiOS());
+                    break;
+                case "拓展资源":
+                    mBaseGankBeanList.addAll(data.getResults().get拓展资源());
+                    break;
+                case "瞎推荐":
+                    mBaseGankBeanList.addAll(data.getResults().get瞎推荐());
+                    break;
+                case "Android":
+                    mBaseGankBeanList.addAll(data.getResults().getAndroid());
+                    break;
+                case "App":
+                    mBaseGankBeanList.addAll(data.getResults().getApp());
+                    break;
+                case "前端":
+                    mBaseGankBeanList.addAll(data.getResults().get前端());
+                    break;
+                case "福利":
+                    mBaseGankBeanList.addAll(data.getResults().get福利());
+                    break;
+                case "休息视频":
+                    mBaseGankBeanList.addAll(data.getResults().get休息视频());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void addCategories(List<String> categories) {
+        List<Category> categoryList = new ArrayList<>();
+        for (String categoryStr : categories) {
+            Category category = new Category(categoryStr);
+            categoryList.add(category);
+        }
+        mPresenter.addCategories(categoryList);
     }
 
     public void jumpToTop() {

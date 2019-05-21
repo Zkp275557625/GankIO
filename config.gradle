@@ -26,7 +26,9 @@ ext {
             rxandroidVersion                    : "2.0.1",
             smartShowVersion                    : "2.7.5",
             permissionVersion                   : "2.0.1",
-            BaseRecyclerViewAdapterHelperVersion: "2.9.46"
+            BaseRecyclerViewAdapterHelperVersion: "2.9.46",
+            greebDaoVersion                     : "3.2.2",
+            MagicIndicatorVersion               : "1.5.0"
     ]
 
     dependencies = [
@@ -48,6 +50,7 @@ ext {
             "banner"                       : "com.youth.banner:banner:${version["bannerVersion"]}",
             "agentweb"                     : "com.just.agentweb:agentweb:${version["agentWebVersion"]}",
             "smartShow"                    : "com.github.the-pig-of-jungle.smart-show:all:${version["smartShowVersion"]}",
+            "MagicIndicator"               : "com.github.hackware1993:MagicIndicator:${version["MagicIndicatorVersion"]}",
 
             //net
             "gson"                         : "com.google.code.gson:gson:${version["gsonVersion"]}",
@@ -75,6 +78,8 @@ ext {
 
             //tools
             "permission"                   : "com.yanzhenjie.permission:support:${version["permissionVersion"]}",
-            "BaseRecyclerViewAdapterHelper": "com.github.CymChad:BaseRecyclerViewAdapterHelper:${version["BaseRecyclerViewAdapterHelperVersion"]}"
+            "BaseRecyclerViewAdapterHelper": "com.github.CymChad:BaseRecyclerViewAdapterHelper:${version["BaseRecyclerViewAdapterHelperVersion"]}",
+            "greenDao"                     : "org.greenrobot:greendao:${version["greebDaoVersion"]}",
+            "greenDao-Generator"           : "org.greenrobot:greendao-generator:${version["greebDaoVersion"]}"
     ]
 }

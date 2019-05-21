@@ -27,6 +27,10 @@
             android:background="@color/colorWhite"
             android:visibility="visible" />
 
+        <com.scwang.smartrefresh.header.TaurusHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 </com.classic.common.MultipleStatusView>

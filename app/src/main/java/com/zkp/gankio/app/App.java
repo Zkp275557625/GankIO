@@ -1,23 +1,21 @@
 package com.zkp.gankio.app;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.coder.zzq.smartshow.core.SmartShow;
 import com.zkp.gankio.base.activity.BaseActivity;
 import com.zkp.gankio.base.fragment.BaseFragment;
 import com.zkp.gankio.crash.UnCaughtHandler;
+import com.zkp.gankio.db.greendao.DaoMaster;
+import com.zkp.gankio.db.greendao.DaoSession;
+import com.zkp.gankio.http.AppConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.inject.Inject;
-
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
 
 /**
  * @author: zkp
@@ -30,7 +28,7 @@ public class App extends Application {
 
     private static Context mContext;
     private static App mApplication;
-
+    private static DaoSession daoSession;
     private List<BaseActivity> mActivityList;
     private List<BaseFragment> mFragmentsList;
 
@@ -42,6 +40,9 @@ public class App extends Application {
         return mContext;
     }
 
+    public static DaoSession getDaoSession() {
+        return daoSession;
+    }
 
     @Override
     public void onCreate() {
@@ -55,6 +56,15 @@ public class App extends Application {
 
         SmartShow.init(mApplication);
 
+        initGreenDao();
+
+    }
+
+    private void initGreenDao() {
+        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(mContext, AppConfig.DB_NAME);
+        SQLiteDatabase database = devOpenHelper.getWritableDatabase();
+        DaoMaster daoMaster = new DaoMaster(database);
+        daoSession = daoMaster.newSession();
     }
 
     public void addActivity(BaseActivity activity) {

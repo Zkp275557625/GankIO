@@ -1,11 +1,19 @@
 package com.zkp.gankio.modules.home;
 
 import com.zkp.gankio.base.presenter.BasePresenter;
-import com.zkp.gankio.beans.BannerBean;
 import com.zkp.gankio.beans.TodayGankBean;
+import com.zkp.gankio.db.DbHelper;
+import com.zkp.gankio.db.DbHelperImp;
+import com.zkp.gankio.db.entity.Category;
 import com.zkp.gankio.http.ApiService;
 import com.zkp.gankio.http.AppConfig;
 import com.zkp.gankio.http.HttpUtil;
+import com.zkp.gankio.utils.RxUtils;
+
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
 
 /**
  * @author: zkp
@@ -16,29 +24,10 @@ import com.zkp.gankio.http.HttpUtil;
  */
 public class HomePresenter extends BasePresenter<HomeFragmentContract.View> implements HomeFragmentContract.Presenter {
 
-    @Override
-    public void getBanner() {
-        if (mView != null) {
-            mView.showLoading();
+    private DbHelper dbHelper;
 
-            HttpUtil.request(HttpUtil.createApi(AppConfig.BASE_URL, ApiService.class).getBanner(), new HttpUtil.IResponseListener<BannerBean>() {
-                @Override
-                public void onSuccess(BannerBean data) {
-                    if (!data.isError()) {
-                        mView.getBannerSuccess(data);
-                    } else {
-                        mView.getBannerError("获取banner失败");
-                    }
-                    mView.hideLoading();
-                }
-
-                @Override
-                public void onFail(String errMsg) {
-                    mView.getBannerError("获取banner失败");
-                    mView.hideLoading();
-                }
-            });
-        }
+    public HomePresenter() {
+        dbHelper = new DbHelperImp();
     }
 
     @Override
@@ -64,5 +53,18 @@ public class HomePresenter extends BasePresenter<HomeFragmentContract.View> impl
                 }
             });
         }
+    }
+
+    @Override
+    public void addCategories(List<Category> categoryList) {
+        addSubscribe(Observable.create((ObservableOnSubscribe<List<Category>>) e -> {
+            dbHelper.addCategories(categoryList);
+            e.onNext(categoryList);
+        }).compose(RxUtils.schedulerTransformer())
+                .filter(articleList -> mView != null)
+                .subscribe(articleList -> {
+                            mView.addCategoriesSuccess();
+                        }
+                ));
     }
 }

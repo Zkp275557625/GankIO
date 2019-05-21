@@ -12,9 +12,9 @@
         android:title="@string/category_pager" />
 
     <item
-        android:id="@+id/navigation_images"
-        android:icon="@drawable/ic_images"
-        android:title="@string/images_pager" />
+        android:id="@+id/navigation_read"
+        android:icon="@drawable/ic_read"
+        android:title="@string/read_pager" />
 
     <item
         android:id="@+id/navigation_mine"

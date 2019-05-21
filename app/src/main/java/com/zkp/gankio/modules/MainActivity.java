@@ -13,6 +13,7 @@ import com.zkp.gankio.R;
 import com.zkp.gankio.app.App;
 import com.zkp.gankio.base.activity.BaseActivity;
 import com.zkp.gankio.http.AppConfig;
+import com.zkp.gankio.modules.category.CategoryFragment;
 import com.zkp.gankio.modules.home.HomeFragment;
 
 import butterknife.BindView;
@@ -50,6 +51,7 @@ public class MainActivity extends BaseActivity {
     private long clickTime;
 
     private HomeFragment mHomeFragment;
+    private CategoryFragment mCategoryFragment;
 
     @Override
     public void onBackPressedSupport() {
@@ -113,11 +115,11 @@ public class MainActivity extends BaseActivity {
                     mHomeFragment.jumpToTop();
                 }
                 break;
-//            case AppConfig.TYPE_CATRGORY:
-//                if (mKnowledgeFragment != null) {
-//                    mKnowledgeFragment.jumpToTop();
-//                }
-//                break;
+            case AppConfig.TYPE_CATRGORY:
+                if (mCategoryFragment != null) {
+                    mCategoryFragment.jumpToTop();
+                }
+                break;
 //            case AppConfig.TYPE_IMAGES:
 //                if (mWeChatFragment != null) {
 //                    mWeChatFragment.jumpToTop();
@@ -149,14 +151,14 @@ public class MainActivity extends BaseActivity {
                 break;
             case AppConfig.TYPE_CATRGORY:
                 mTitle.setText(getString(R.string.category_pager));
-//                if (mKnowledgeFragment == null) {
-//                    mKnowledgeFragment = KnowLedgeFragment.newInstance();
-//                    transaction.add(R.id.frameLayout, mKnowledgeFragment);
-//                }
-//                transaction.show(mKnowledgeFragment);
+                if (mCategoryFragment == null) {
+                    mCategoryFragment = CategoryFragment.newInstance();
+                    transaction.add(R.id.frameLayout, mCategoryFragment);
+                }
+                transaction.show(mCategoryFragment);
                 break;
-            case AppConfig.TYPE_IMAGES:
-                mTitle.setText(getString(R.string.images_pager));
+            case AppConfig.TYPE_READ:
+                mTitle.setText(getString(R.string.read_pager));
 //                if (mWeChatFragment == null) {
 //                    mWeChatFragment = WeChatFragment.newInstance();
 //                    transaction.add(R.id.frameLayout, mWeChatFragment);
@@ -186,8 +188,8 @@ public class MainActivity extends BaseActivity {
                 case R.id.navigation_category:
                     showFragment(AppConfig.TYPE_CATRGORY);
                     break;
-                case R.id.navigation_images:
-                    showFragment(AppConfig.TYPE_IMAGES);
+                case R.id.navigation_read:
+                    showFragment(AppConfig.TYPE_READ);
                     break;
                 case R.id.navigation_mine:
                     showFragment(AppConfig.TYPE_MINE);
@@ -207,11 +209,11 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case AppConfig.TYPE_CATRGORY:
-//                if (mKnowledgeFragment != null) {
-//                    transaction.hide(mKnowledgeFragment);
-//                }
+                if (mCategoryFragment != null) {
+                    transaction.hide(mCategoryFragment);
+                }
                 break;
-            case AppConfig.TYPE_IMAGES:
+            case AppConfig.TYPE_READ:
 //                if (mWeChatFragment != null) {
 //                    transaction.hide(mWeChatFragment);
 //                }
