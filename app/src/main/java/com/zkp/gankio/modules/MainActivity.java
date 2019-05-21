@@ -15,6 +15,7 @@ import com.zkp.gankio.base.activity.BaseActivity;
 import com.zkp.gankio.http.AppConfig;
 import com.zkp.gankio.modules.category.CategoryFragment;
 import com.zkp.gankio.modules.home.HomeFragment;
+import com.zkp.gankio.modules.read.ReadFragment;
 
 import butterknife.BindView;
 
@@ -52,6 +53,7 @@ public class MainActivity extends BaseActivity {
 
     private HomeFragment mHomeFragment;
     private CategoryFragment mCategoryFragment;
+    private ReadFragment mReadFragment;
 
     @Override
     public void onBackPressedSupport() {
@@ -120,11 +122,11 @@ public class MainActivity extends BaseActivity {
                     mCategoryFragment.jumpToTop();
                 }
                 break;
-//            case AppConfig.TYPE_IMAGES:
-//                if (mWeChatFragment != null) {
-//                    mWeChatFragment.jumpToTop();
+            case AppConfig.TYPE_READ:
+//                if (mReadFragment != null) {
+//                    mReadFragment.jumpToTop();
 //                }
-//                break;
+                break;
 //            case AppConfig.TYPE_MINE:
 //                if (mNavigationFragment != null) {
 //                    mNavigationFragment.jumpToTop();
@@ -159,11 +161,11 @@ public class MainActivity extends BaseActivity {
                 break;
             case AppConfig.TYPE_READ:
                 mTitle.setText(getString(R.string.read_pager));
-//                if (mWeChatFragment == null) {
-//                    mWeChatFragment = WeChatFragment.newInstance();
-//                    transaction.add(R.id.frameLayout, mWeChatFragment);
-//                }
-//                transaction.show(mWeChatFragment);
+                if (mReadFragment == null) {
+                    mReadFragment = ReadFragment.newInstance();
+                    transaction.add(R.id.frameLayout, mReadFragment);
+                }
+                transaction.show(mReadFragment);
                 break;
             case AppConfig.TYPE_MINE:
                 mTitle.setText(getString(R.string.mine_pager));
@@ -214,9 +216,9 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case AppConfig.TYPE_READ:
-//                if (mWeChatFragment != null) {
-//                    transaction.hide(mWeChatFragment);
-//                }
+                if (mReadFragment != null) {
+                    transaction.hide(mReadFragment);
+                }
                 break;
             case AppConfig.TYPE_MINE:
 //                if (mNavigationFragment != null) {

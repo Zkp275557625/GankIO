@@ -1,4 +1,4 @@
-package com.zkp.gankio.modules.category;
+package com.zkp.gankio.modules.read;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,10 +9,11 @@ import android.text.Html;
 import android.util.SparseArray;
 import android.widget.LinearLayout;
 
+import com.coder.zzq.smartshow.toast.SmartToast;
 import com.zkp.gankio.R;
 import com.zkp.gankio.base.fragment.BaseFragment;
-import com.zkp.gankio.db.entity.Category;
-import com.zkp.gankio.modules.category.list.CategoryListFragment;
+import com.zkp.gankio.beans.ReadCategoryMainBean;
+import com.zkp.gankio.modules.read.child.ReadChildFragment;
 import com.zkp.gankio.utils.DensityUtils;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
@@ -32,11 +33,11 @@ import butterknife.BindView;
 /**
  * @author: zkp
  * @project: GankIO
- * @package: com.zkp.gankio.modules.category
- * @time: 2019/5/21 11:38
+ * @package: com.zkp.gankio.modules.read
+ * @time: 2019/5/21 15:46
  * @description:
  */
-public class CategoryFragment extends BaseFragment<CategoryPresenter> implements CategoryFragmentContract.View {
+public class ReadFragment extends BaseFragment<ReadPresenter> implements ReadFragmentContract.View {
 
     @BindView(R.id.magicIndicator)
     MagicIndicator mMagicIndicator;
@@ -44,24 +45,23 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
     @BindView(R.id.viewPager)
     ViewPager mViewPager;
 
-    private List<Category> mCategoryList;
-    private SparseArray<CategoryListFragment> fragmentSparseArray = new SparseArray<>();
+    private List<ReadCategoryMainBean.ResultsBean> mResultsBeanList;
+    private SparseArray<ReadChildFragment> fragmentSparseArray = new SparseArray<>();
 
-    public static CategoryFragment newInstance() {
-        return new CategoryFragment();
+    public static ReadFragment newInstance() {
+        return new ReadFragment();
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_category;
+        return R.layout.fragment_read;
     }
 
     @Override
     protected void initView() {
-        mPresenter = new CategoryPresenter();
+        mPresenter = new ReadPresenter();
         mPresenter.attachView(this);
-        mPresenter.loadCategories();
-
+        mPresenter.getReadCategoryMain();
     }
 
     @Override
@@ -70,8 +70,8 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
     }
 
     @Override
-    public void loadCategoriesSuccess(List<Category> categoryList) {
-        mCategoryList = categoryList;
+    public void getReadCategoryMainSuccess(ReadCategoryMainBean data) {
+        mResultsBeanList = data.getResults();
         initMagicIndicator();
         initViewPager();
     }
@@ -82,7 +82,7 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
             @Override
             public int getCount() {
-                return mCategoryList == null ? 0 : mCategoryList.size();
+                return mResultsBeanList == null ? 0 : mResultsBeanList.size();
             }
 
             @Override
@@ -91,7 +91,7 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins(DensityUtils.dip2px(context, 15), 0, DensityUtils.dip2px(context, 15), 0);
                 simplePagerTitleView.setLayoutParams(params);
-                simplePagerTitleView.setText(mCategoryList.get(index).getCategoryName());
+                simplePagerTitleView.setText(mResultsBeanList.get(index).getName());
                 simplePagerTitleView.setNormalColor(Objects.requireNonNull(getContext()).getResources().getColor(R.color.Grey800));
                 simplePagerTitleView.setSelectedColor(Objects.requireNonNull(getContext()).getResources().getColor(R.color.colorWhiteTitle));
                 simplePagerTitleView.setOnClickListener(v -> mViewPager.setCurrentItem(index));
@@ -114,34 +114,32 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                CategoryListFragment categoryListFragment = fragmentSparseArray.get(position);
-                if (categoryListFragment != null) {
-                    return categoryListFragment;
+                ReadChildFragment readChildFragment = fragmentSparseArray.get(position);
+                if (readChildFragment != null) {
+                    return readChildFragment;
                 } else {
                     Bundle bundle = new Bundle();
-                    bundle.putString("category", mCategoryList.get(position).getCategoryName());
-                    categoryListFragment = CategoryListFragment.newInstance(bundle);
-                    fragmentSparseArray.put(position, categoryListFragment);
-                    return categoryListFragment;
+                    bundle.putString("enName", mResultsBeanList.get(position).getEn_name());
+                    readChildFragment = ReadChildFragment.newInstance(bundle);
+                    fragmentSparseArray.put(position, readChildFragment);
+                    return readChildFragment;
                 }
             }
 
             @Override
             public int getCount() {
-                return mCategoryList == null ? 0 : mCategoryList.size();
+                return mResultsBeanList == null ? 0 : mResultsBeanList.size();
             }
 
             @Override
             public CharSequence getPageTitle(int position) {
-                return Html.fromHtml(mCategoryList.get(position).getCategoryName());
+                return Html.fromHtml(mResultsBeanList.get(position).getName());
             }
         });
     }
 
-    public void jumpToTop() {
-        CategoryListFragment currentFragment = fragmentSparseArray.get(mViewPager.getCurrentItem());
-        if (currentFragment != null) {
-            currentFragment.jumpToTop();
-        }
+    @Override
+    public void getReadCategoryMainError(String errMsg) {
+        SmartToast.show(errMsg);
     }
 }

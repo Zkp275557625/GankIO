@@ -1,4 +1,4 @@
-package com.zkp.gankio.modules.category;
+package com.zkp.gankio.modules.read.child;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,10 +9,11 @@ import android.text.Html;
 import android.util.SparseArray;
 import android.widget.LinearLayout;
 
+import com.coder.zzq.smartshow.toast.SmartToast;
 import com.zkp.gankio.R;
 import com.zkp.gankio.base.fragment.BaseFragment;
-import com.zkp.gankio.db.entity.Category;
-import com.zkp.gankio.modules.category.list.CategoryListFragment;
+import com.zkp.gankio.beans.ReadCategoryChildBean;
+import com.zkp.gankio.modules.read.detail.ReadDetailFragment;
 import com.zkp.gankio.utils.DensityUtils;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
@@ -32,11 +33,11 @@ import butterknife.BindView;
 /**
  * @author: zkp
  * @project: GankIO
- * @package: com.zkp.gankio.modules.category
- * @time: 2019/5/21 11:38
+ * @package: com.zkp.gankio.modules.read.child
+ * @time: 2019/5/21 16:32
  * @description:
  */
-public class CategoryFragment extends BaseFragment<CategoryPresenter> implements CategoryFragmentContract.View {
+public class ReadChildFragment extends BaseFragment<ReadChildPresenter> implements ReadChildFragmentContract.View {
 
     @BindView(R.id.magicIndicator)
     MagicIndicator mMagicIndicator;
@@ -44,34 +45,42 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
     @BindView(R.id.viewPager)
     ViewPager mViewPager;
 
-    private List<Category> mCategoryList;
-    private SparseArray<CategoryListFragment> fragmentSparseArray = new SparseArray<>();
+    /**
+     * 主分类英文名称
+     */
+    private String enName;
+    private List<ReadCategoryChildBean.ResultsBean> mResultsBeanList;
+    private SparseArray<ReadDetailFragment> fragmentSparseArray = new SparseArray<>();
 
-    public static CategoryFragment newInstance() {
-        return new CategoryFragment();
+    public static ReadChildFragment newInstance(Bundle bundle) {
+        ReadChildFragment fragment = new ReadChildFragment();
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_category;
+        return R.layout.fragment_read_child;
     }
 
     @Override
     protected void initView() {
-        mPresenter = new CategoryPresenter();
-        mPresenter.attachView(this);
-        mPresenter.loadCategories();
 
     }
 
     @Override
     protected void initEventAndData() {
+        assert getArguments() != null;
+        enName = getArguments().getString("enName");
 
+        mPresenter = new ReadChildPresenter();
+        mPresenter.attachView(this);
+        mPresenter.getReadCategoryChild(enName);
     }
 
     @Override
-    public void loadCategoriesSuccess(List<Category> categoryList) {
-        mCategoryList = categoryList;
+    public void getReadCategoryChildSuccess(ReadCategoryChildBean data) {
+        mResultsBeanList = data.getResults();
         initMagicIndicator();
         initViewPager();
     }
@@ -82,7 +91,7 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
             @Override
             public int getCount() {
-                return mCategoryList == null ? 0 : mCategoryList.size();
+                return mResultsBeanList == null ? 0 : mResultsBeanList.size();
             }
 
             @Override
@@ -91,7 +100,7 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins(DensityUtils.dip2px(context, 15), 0, DensityUtils.dip2px(context, 15), 0);
                 simplePagerTitleView.setLayoutParams(params);
-                simplePagerTitleView.setText(mCategoryList.get(index).getCategoryName());
+                simplePagerTitleView.setText(mResultsBeanList.get(index).getTitle());
                 simplePagerTitleView.setNormalColor(Objects.requireNonNull(getContext()).getResources().getColor(R.color.Grey800));
                 simplePagerTitleView.setSelectedColor(Objects.requireNonNull(getContext()).getResources().getColor(R.color.colorWhiteTitle));
                 simplePagerTitleView.setOnClickListener(v -> mViewPager.setCurrentItem(index));
@@ -114,34 +123,32 @@ public class CategoryFragment extends BaseFragment<CategoryPresenter> implements
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                CategoryListFragment categoryListFragment = fragmentSparseArray.get(position);
-                if (categoryListFragment != null) {
-                    return categoryListFragment;
+                ReadDetailFragment readDetailFragment = fragmentSparseArray.get(position);
+                if (readDetailFragment != null) {
+                    return readDetailFragment;
                 } else {
                     Bundle bundle = new Bundle();
-                    bundle.putString("category", mCategoryList.get(position).getCategoryName());
-                    categoryListFragment = CategoryListFragment.newInstance(bundle);
-                    fragmentSparseArray.put(position, categoryListFragment);
-                    return categoryListFragment;
+                    bundle.putString("id", mResultsBeanList.get(position).getId());
+                    readDetailFragment = ReadDetailFragment.newInstance(bundle);
+                    fragmentSparseArray.put(position, readDetailFragment);
+                    return readDetailFragment;
                 }
             }
 
             @Override
             public int getCount() {
-                return mCategoryList == null ? 0 : mCategoryList.size();
+                return mResultsBeanList == null ? 0 : mResultsBeanList.size();
             }
 
             @Override
             public CharSequence getPageTitle(int position) {
-                return Html.fromHtml(mCategoryList.get(position).getCategoryName());
+                return Html.fromHtml(mResultsBeanList.get(position).getTitle());
             }
         });
     }
 
-    public void jumpToTop() {
-        CategoryListFragment currentFragment = fragmentSparseArray.get(mViewPager.getCurrentItem());
-        if (currentFragment != null) {
-            currentFragment.jumpToTop();
-        }
+    @Override
+    public void getReadCategoryChildError(String errMsg) {
+        SmartToast.show(errMsg);
     }
 }
