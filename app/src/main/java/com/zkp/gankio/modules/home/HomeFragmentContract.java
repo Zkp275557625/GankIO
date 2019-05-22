@@ -4,6 +4,7 @@ import com.zkp.gankio.base.presenter.IPresenter;
 import com.zkp.gankio.base.view.IView;
 import com.zkp.gankio.beans.BannerBean;
 import com.zkp.gankio.beans.TodayGankBean;
+import com.zkp.gankio.db.entity.Article;
 import com.zkp.gankio.db.entity.Category;
 
 import java.util.List;
@@ -37,6 +38,23 @@ public class HomeFragmentContract {
          */
         void addCategoriesSuccess();
 
+        /**
+         * 从数据库中加载所有收藏文章信息成功
+         *
+         * @param articleList
+         */
+        void loadArticlesSuccess(List<Article> articleList);
+
+        /**
+         * 收藏文章成功
+         */
+        void collectArticleSuccess();
+
+        /**
+         * 取消收藏文章成功
+         */
+        void unCollectArticleSuccess();
+
     }
 
     public interface Presenter extends IPresenter<View> {
@@ -47,8 +65,30 @@ public class HomeFragmentContract {
 
         /**
          * 向数据库中添加分类数据
+         * @param categoryList
          */
         void addCategories(List<Category> categoryList);
+
+        /**
+         * 从数据库中加载所有收藏的文章信息
+         *
+         * @return
+         */
+        void loadArticles();
+
+        /**
+         * 收藏文章
+         *
+         * @param article
+         */
+        void collectArticle(Article article);
+
+        /**
+         * 取消收藏文章
+         *
+         * @param articleId
+         */
+        void unCollectArticle(String articleId);
 
     }
 

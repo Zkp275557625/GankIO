@@ -142,4 +142,11 @@ public class ReadFragment extends BaseFragment<ReadPresenter> implements ReadFra
     public void getReadCategoryMainError(String errMsg) {
         SmartToast.show(errMsg);
     }
+
+    public void jumpToTop() {
+        ReadChildFragment currentFragment = fragmentSparseArray.get(mViewPager.getCurrentItem());
+        if (currentFragment != null) {
+            currentFragment.jumpToTop();
+        }
+    }
 }

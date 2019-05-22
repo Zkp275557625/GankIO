@@ -151,4 +151,12 @@ public class ReadChildFragment extends BaseFragment<ReadChildPresenter> implemen
     public void getReadCategoryChildError(String errMsg) {
         SmartToast.show(errMsg);
     }
+
+    public void jumpToTop() {
+        ReadDetailFragment currentFragment = fragmentSparseArray.get(mViewPager.getCurrentItem());
+        if (currentFragment != null) {
+            currentFragment.jumpToTop();
+        }
+    }
+
 }

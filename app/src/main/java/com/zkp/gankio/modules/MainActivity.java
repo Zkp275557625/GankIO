@@ -3,6 +3,7 @@ package com.zkp.gankio.modules;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,7 @@ import com.zkp.gankio.base.activity.BaseActivity;
 import com.zkp.gankio.http.AppConfig;
 import com.zkp.gankio.modules.category.CategoryFragment;
 import com.zkp.gankio.modules.home.HomeFragment;
+import com.zkp.gankio.modules.mine.MineFragment;
 import com.zkp.gankio.modules.read.ReadFragment;
 
 import butterknife.BindView;
@@ -54,6 +56,7 @@ public class MainActivity extends BaseActivity {
     private HomeFragment mHomeFragment;
     private CategoryFragment mCategoryFragment;
     private ReadFragment mReadFragment;
+    private MineFragment mMineFragment;
 
     @Override
     public void onBackPressedSupport() {
@@ -94,8 +97,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initView() {
         //闪退重启、日志收集，保存在 玩安卓/Crash 下
-        App.getApplication().initUnCaughtHandler();
-        App.getApplication().addActivity(this);
+//        App.getApplication().initUnCaughtHandler();
+//        App.getApplication().addActivity(this);
 
         showFragment(mCurrentFgIndex);
         initBottomNavigationView();
@@ -123,9 +126,9 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case AppConfig.TYPE_READ:
-//                if (mReadFragment != null) {
-//                    mReadFragment.jumpToTop();
-//                }
+                if (mReadFragment != null) {
+                    mReadFragment.jumpToTop();
+                }
                 break;
 //            case AppConfig.TYPE_MINE:
 //                if (mNavigationFragment != null) {
@@ -169,11 +172,11 @@ public class MainActivity extends BaseActivity {
                 break;
             case AppConfig.TYPE_MINE:
                 mTitle.setText(getString(R.string.mine_pager));
-//                if (mNavigationFragment == null) {
-//                    mNavigationFragment = NavigationFragment.newInstance();
-//                    transaction.add(R.id.frameLayout, mNavigationFragment);
-//                }
-//                transaction.show(mNavigationFragment);
+                if (mMineFragment == null) {
+                    mMineFragment = MineFragment.newInstance();
+                    transaction.add(R.id.frameLayout, mMineFragment);
+                }
+                transaction.show(mMineFragment);
                 break;
             default:
                 break;
@@ -221,9 +224,9 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             case AppConfig.TYPE_MINE:
-//                if (mNavigationFragment != null) {
-//                    transaction.hide(mNavigationFragment);
-//                }
+                if (mMineFragment != null) {
+                    transaction.hide(mMineFragment);
+                }
                 break;
             default:
                 break;

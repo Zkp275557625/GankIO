@@ -38,6 +38,13 @@ public interface DbHelper {
     Article loadArticle(String articleId);
 
     /**
+     * 从数据库中加载所有收藏的文章信息
+     *
+     * @return
+     */
+    List<Article> loadArticles();
+
+    /**
      * 从数据库中加载所有的分类信息
      *
      * @return

@@ -114,4 +114,11 @@ public class ReadDetailFragment extends BaseFragment<ReadDetailPresenter> implem
     public void getReadDetailListError(String errMsg) {
         SmartToast.show(errMsg);
     }
+
+    public void jumpToTop() {
+        if (mRecyclerView != null) {
+            mRecyclerView.smoothScrollToPosition(0);
+        }
+    }
+
 }

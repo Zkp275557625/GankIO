@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_100"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@mipmap/ic_launcher" />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_2"
+        app:cardCornerRadius="@dimen/dp_10">
+
+        <TextView
+            android:id="@+id/tvCollect"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:drawableStart="@drawable/ic_like_black"
+            android:drawableEnd="@drawable/ic_arrow_right"
+            android:drawablePadding="@dimen/dp_5"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/dp_10"
+            android:paddingEnd="@dimen/dp_10"
+            android:text="@string/mine_collect"
+            android:textColor="@color/Grey900"
+            android:textSize="@dimen/sp_16" />
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_2"
+        app:cardCornerRadius="@dimen/dp_10">
+
+        <TextView
+            android:id="@+id/tvHistory"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:drawableStart="@drawable/ic_history"
+            android:drawableEnd="@drawable/ic_arrow_right"
+            android:drawablePadding="@dimen/dp_5"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/dp_10"
+            android:paddingEnd="@dimen/dp_10"
+            android:text="@string/gank_history"
+            android:textColor="@color/Grey900"
+            android:textSize="@dimen/sp_16" />
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

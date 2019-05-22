@@ -2,6 +2,8 @@ package com.zkp.gankio.http;
 
 import com.zkp.gankio.beans.BannerBean;
 import com.zkp.gankio.beans.CategoryBean;
+import com.zkp.gankio.beans.HistoryContentBean;
+import com.zkp.gankio.beans.HistoryGankBean;
 import com.zkp.gankio.beans.ReadCategoryChildBean;
 import com.zkp.gankio.beans.ReadCategoryMainBean;
 import com.zkp.gankio.beans.ReadDetailBean;
@@ -19,14 +21,6 @@ import retrofit2.http.Path;
  * @description:
  */
 public interface ApiService {
-
-    /**
-     * 获取首页banner
-     *
-     * @return
-     */
-    @GET("/api/data/福利/10/1")
-    Observable<BannerBean> getBanner();
 
     /**
      * 获取今日干货
@@ -72,5 +66,31 @@ public interface ApiService {
      */
     @GET("/api/xiandu/data/id/{id}/count/20/page/{page}")
     Observable<ReadDetailBean> getReadDetailList(@Path("id") String id, @Path("page") int page);
+
+    /**
+     * 获取发过干货的日期列表
+     *
+     * @return
+     */
+    @GET("/api/day/history")
+    Observable<HistoryGankBean> getHistoryGank();
+
+    /**
+     * 获取首页banner
+     *
+     * @param page 页码 从1开始
+     * @return
+     */
+    @GET("/api/data/福利/20/{page}")
+    Observable<BannerBean> getBanner(@Path(("page")) int page);
+
+    /**
+     * 获取历史干货的内容
+     *
+     * @param date 日期 2019/05/22
+     * @return
+     */
+    @GET("/api/history/content/day/{date}")
+    Observable<HistoryContentBean> getHistoryContent(@Path(("date")) String date);
 
 }

@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.coder.zzq.smartshow.toast.SmartToast;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yanzhenjie.permission.AndPermission;
@@ -19,6 +18,7 @@ import com.zkp.gankio.app.App;
 import com.zkp.gankio.base.fragment.BaseFragment;
 import com.zkp.gankio.beans.BaseGankBean;
 import com.zkp.gankio.beans.TodayGankBean;
+import com.zkp.gankio.db.entity.Article;
 import com.zkp.gankio.db.entity.Category;
 import com.zkp.gankio.modules.home.adapter.HomeArticlesAdapter;
 import com.zkp.gankio.modules.home.detail.ArticleActivity;
@@ -70,7 +70,8 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
         mRecyclerView.setHasFixedSize(true);
 
         List<BaseGankBean> resultsBeanList = new ArrayList<>();
-        mAdapter = new HomeArticlesAdapter(R.layout.item_home_article, resultsBeanList);
+        List<Article> articleList = new ArrayList<>();
+        mAdapter = new HomeArticlesAdapter(R.layout.item_home_article, resultsBeanList, articleList);
         mRecyclerView.setAdapter(mAdapter);
 
         mPresenter = new HomePresenter();
@@ -110,6 +111,21 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
             intent.putExtra("isShowCollectIcon", true);
             startActivity(intent);
         });
+
+        mAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            if (mAdapter.getIsCollectList().get(position)) {
+                //已经收藏
+                mPresenter.unCollectArticle(Objects.requireNonNull(mAdapter.getItem(position)).get_id());
+            } else {
+                //收藏
+                Article article = new Article(Objects.requireNonNull(mAdapter.getItem(position)).get_id(),
+                        Objects.requireNonNull(mAdapter.getItem(position)).getUrl(),
+                        Objects.requireNonNull(mAdapter.getItem(position)).getDesc(),
+                        Objects.requireNonNull(mAdapter.getItem(position)).getWho(),
+                        Objects.requireNonNull(mAdapter.getItem(position)).getType());
+                mPresenter.collectArticle(article);
+            }
+        });
     }
 
     @Override
@@ -138,6 +154,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
         addCategories(data.getCategory());
 
         mAdapter.addData(mBaseGankBeanList);
+        mPresenter.loadArticles();
     }
 
     @Override
@@ -148,6 +165,22 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
     @Override
     public void addCategoriesSuccess() {
 
+    }
+
+    @Override
+    public void loadArticlesSuccess(List<Article> articleList) {
+        mAdapter.setArticleList(articleList);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void collectArticleSuccess() {
+        mPresenter.loadArticles();
+    }
+
+    @Override
+    public void unCollectArticleSuccess() {
+        mPresenter.loadArticles();
     }
 
     private void addDataToGroup(List<GroupItem> groupList, TodayGankBean data) {
@@ -257,6 +290,14 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeFra
     public void jumpToTop() {
         if (mRecyclerView != null) {
             mRecyclerView.smoothScrollToPosition(0);
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            mPresenter.loadArticles();
         }
     }
 }

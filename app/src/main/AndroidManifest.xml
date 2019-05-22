@@ -34,6 +34,14 @@
             android:name=".modules.home.detail.ArticleActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".modules.mine.collect.CollectActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".modules.mine.history.HistoryActivity"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

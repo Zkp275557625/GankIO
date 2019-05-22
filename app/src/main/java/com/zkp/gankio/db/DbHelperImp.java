@@ -39,6 +39,11 @@ public class DbHelperImp implements DbHelper {
     }
 
     @Override
+    public List<Article> loadArticles() {
+        return daoSession.getArticleDao().loadAll();
+    }
+
+    @Override
     public List<Category> loadCategories() {
         return daoSession.getCategoryDao().loadAll();
     }
